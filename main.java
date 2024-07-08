@@ -24,8 +24,6 @@ public class Main {
             System.out.println("Server is listening on port " + PORT);
 
             while (true) {
-                // wait until the connection is established and 
-                // then return a socket object representing the connection
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected");
                 try {
