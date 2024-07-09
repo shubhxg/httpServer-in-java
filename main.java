@@ -1,11 +1,8 @@
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 // steps: 
 // 1. Create a server socket to listen on the port
@@ -19,7 +16,7 @@ import java.io.PrintWriter;
 // ... existing code ...
 
 public class main {
-    private static final int PORT = 8080;
+    private static final int PORT = 8000;
     private static String htmlCode = "<html><body><h1>Hello World</h1></body></html>";
 
     public static void main(String[] args) {
@@ -76,10 +73,25 @@ public class main {
     private static void sendResponse(PrintWriter writer, String path) {
         writer.println("HTTP/1.1 200 OK");
         writer.println("Content-Type: text/html; charset=UTF-8");
-        writer.println("");
+        writer.println();
 
         if ("/helloworld".equals(path)) {
             writer.println(htmlCode);
+        } else if (path.startsWith("/file/")) {
+            String fileName = path.substring(6); 
+            String fileContent = readFileContent(fileName);
+            writer.println("<html><body><pre>" + fileContent + "</pre></body></html>");
+        } else {
+            writer.println("<html><body><h1>404 Not Found</h1></body></html>");
+        }
+    }
+    
+    private static String readFileContent(String fileName) {
+        try {
+            return new String(Files.readAllBytes(Paths.get(fileName)));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error: Unable to read file " + fileName;
         }
     }
 }
