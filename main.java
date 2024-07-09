@@ -16,6 +16,8 @@ import java.io.PrintWriter;
 // 6. Send back response header and body.
 // 7. Close the socket
 
+// ... existing code ...
+
 public class main {
     private static final int PORT = 8080;
     private static String htmlCode = "<html><body><h1>Hello World</h1></body></html>";
@@ -27,51 +29,57 @@ public class main {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected");
-                try {
-                    // input stream to input data from the client
-                    InputStream input = clientSocket.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-                    // reading request from the client until the line is empty
-                    String line = reader.readLine();
-                    String path = "";
-                    while (!line.isEmpty()) {
-                        if (line.startsWith("GET /")) {
-                            path = line.split(" ")[1];
-                            break;
-                        }
-                        line = reader.readLine();
-                    }
-
-                    // output stream to send back data to client
-                    OutputStream output = clientSocket.getOutputStream();
-                    PrintWriter writer = new PrintWriter(output, true);
-
-                    // sending back response headers
-                    writer.println("HTTP/1.1 200 OK");
-                    writer.println("Content-Type: text/html; charset=UTF-8");
-                    writer.println("");
-
-                    // sending back response body
-                    if ("/helloworld".equals(path)) {
-                        writer.println(htmlCode);
-                    }
-
-                    // closing writer
-                    writer.close();
-
-                    // closing socket
-                    clientSocket.close();
-
-                } catch (IOException e) {
-                    System.err.println("Error" + e.getMessage());
-                    e.getStackTrace();
-                }
+                // method to handle client requests
+                handleClientRequest(clientSocket);
             }
 
         } catch (IOException e) {
             System.err.println("Error" + e.getMessage());
             e.getStackTrace(); // a better error throwing method
+        }
+    }
+
+    private static void handleClientRequest(Socket clientSocket) {
+        try {
+            InputStream input = clientSocket.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+            String path = getRequestPath(reader);
+
+            OutputStream output = clientSocket.getOutputStream();
+            PrintWriter writer = new PrintWriter(output, true);
+
+            sendResponse(writer, path);
+
+            writer.close();
+            clientSocket.close();
+
+        } catch (IOException e) {
+            System.err.println("Error" + e.getMessage());
+            e.getStackTrace();
+        }
+    }
+
+    private static String getRequestPath(BufferedReader reader) throws IOException {
+        String line = reader.readLine();
+        String path = "";
+        while (line != null && !line.isEmpty()) {
+            if (line.startsWith("GET /")) {
+                path = line.split(" ")[1];
+                break;
+            }
+            line = reader.readLine();
+        }
+        return path;
+    }
+
+    private static void sendResponse(PrintWriter writer, String path) {
+        writer.println("HTTP/1.1 200 OK");
+        writer.println("Content-Type: text/html; charset=UTF-8");
+        writer.println("");
+
+        if ("/helloworld".equals(path)) {
+            writer.println(htmlCode);
         }
     }
 }
