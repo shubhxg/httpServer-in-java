@@ -16,9 +16,10 @@ import java.io.PrintWriter;
 // 6. Send back response header and body.
 // 7. Close the socket
 
-public class Main {
+public class main {
     private static final int PORT = 8080;
     private static String htmlCode = "<html><body><h1>Hello World</h1></body></html>";
+
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server is listening on port " + PORT);
@@ -34,14 +35,14 @@ public class Main {
                     // reading request from the client until the line is empty
                     String line = reader.readLine();
                     String path = "";
-                    while(!line.isEmpty()) {
+                    while (!line.isEmpty()) {
                         if (line.startsWith("GET /")) {
                             path = line.split(" ")[1];
                             break;
                         }
                         line = reader.readLine();
                     }
-                    
+
                     // output stream to send back data to client
                     OutputStream output = clientSocket.getOutputStream();
                     PrintWriter writer = new PrintWriter(output, true);
@@ -55,20 +56,20 @@ public class Main {
                     if ("/helloworld".equals(path)) {
                         writer.println(htmlCode);
                     }
-                    
+
                     // closing writer
                     writer.close();
 
                     // closing socket
                     clientSocket.close();
-                    
+
                 } catch (IOException e) {
                     System.err.println("Error" + e.getMessage());
                     e.getStackTrace();
                 }
             }
 
-        }  catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("Error" + e.getMessage());
             e.getStackTrace(); // a better error throwing method
         }
