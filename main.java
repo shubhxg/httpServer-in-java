@@ -13,8 +13,6 @@ import java.nio.file.Paths;
 // 6. Send back response header and body.
 // 7. Close the socket
 
-// ... existing code ...
-
 public class main {
     private static final int PORT = 8000;
     private static String htmlCode = "<html><body><h1>Hello World</h1></body></html>";
