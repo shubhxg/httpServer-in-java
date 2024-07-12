@@ -4,17 +4,6 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-// steps: 
-// 1. Create a server socket to listen on the port
-// 2. make it listen on the port while its running and accept the connections
-// 3. Input data from the client
-// 4. Get the path from the header 
-// 5. Type of connection (Get request)
-// 6. Send back response header and body.
-// 7. Close the socket
-
-// ... existing code ...
-
 public class main {
     private static final int PORT = 8000;
     private static String htmlCode = "<html><body><h1>Hello World</h1></body></html>";
